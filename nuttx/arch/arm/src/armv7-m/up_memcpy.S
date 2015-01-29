@@ -141,12 +141,26 @@ MEM_LongCopyTable:
  *
  * Input Parameters:
  *   r0 = destination, r1 = source, r2 = length
+ * Output Parameters:
+ *   r0 = destination r1-r3 burned
  *
  ************************************************************************************/
+
+	.align 4
 
 	.thumb_func
 memcpy:
 	push	{r14}
+	push    {r0}
+	bl      _do_memcpy
+	pop     {r0}
+	pop     {pc}
+
+	.align 4
+
+	.thumb_func
+_do_memcpy:
+	push    {r14}
 
 	/* This allows the inner workings to "assume" a minimum amount of bytes */
 	/* Quickly check for very short copies */
@@ -413,4 +427,5 @@ MEM_DataCopy3:
 	b.n		MEM_DataCopy3
 
 	.size	memcpy, .-memcpy
+
 	.end
